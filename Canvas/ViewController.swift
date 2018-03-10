@@ -14,6 +14,8 @@ class ViewController: UIViewController {
     var trayDownOffset: CGFloat!
     var trayUp: CGPoint!
     var trayDown: CGPoint!
+    var newlyCreatedFace: UIImageView!
+    var newlyCreatedFaceOriginalCenter: CGPoint!
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -49,6 +51,39 @@ class ViewController: UIViewController {
        
     }
     
+    @objc func didPan(_ sender: UIPanGestureRecognizer){
+        let location = sender.location(in: view)
+        let velocity = sender.velocity(in: view)
+        let translation = sender.translation(in: view)
+        
+        if sender.state == .began {
+            newlyCreatedFaceOriginalCenter = newlyCreatedFace.center
+        } else if sender.state == .changed {
+            newlyCreatedFace.center = CGPoint(x: newlyCreatedFaceOriginalCenter.x + translation.x, y: newlyCreatedFaceOriginalCenter.y + translation.y)
+        } else if sender.state == .ended {
+            print("Gesture ended")
+        }
+    }
+    
+    @IBAction func didPanFace(_ sender: UIPanGestureRecognizer) {
+        let translation = sender.translation(in: view)
+        if sender.state == .began{
+            let imageView = sender.view as! UIImageView
+            newlyCreatedFace = UIImageView(image: imageView.image)
+            view.addSubview(newlyCreatedFace)
+            newlyCreatedFace.center = imageView.center
+            newlyCreatedFace.center.y += trayView.frame.origin.y
+            newlyCreatedFaceOriginalCenter = newlyCreatedFace.center
+            newlyCreatedFace.isUserInteractionEnabled = true
+        }else if sender.state == .changed{
+            newlyCreatedFace.center = CGPoint(x: newlyCreatedFaceOriginalCenter.x + translation.x, y: newlyCreatedFaceOriginalCenter.y + translation.y)
+        }else if sender.state == .ended{
+            let panGestureRecognizer = UIPanGestureRecognizer(target: self, action: #selector(didPan(_:)))
+            // Attach it to a view of your choice. If it's a UIImageView, remember to enable user interaction
+            newlyCreatedFace.isUserInteractionEnabled = true
+            newlyCreatedFace.addGestureRecognizer(panGestureRecognizer)
+        }
+    }
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
         // Dispose of any resources that can be recreated.
