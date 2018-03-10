@@ -31,18 +31,18 @@ class ViewController: UIViewController {
         if sender.state == .began{
             trayOriginalCenter = trayView.center
         }else if sender.state == .changed{
-            trayView.center = CGPoint(x: trayOriginalCenter.x + translation.x, y: trayOriginalCenter.y + translation.y)
+            trayView.center = CGPoint(x: trayOriginalCenter.x, y: trayOriginalCenter.y + translation.y)
         }else if sender.state == .ended{
             if (velocity.y > 0){
-                UIView.animate(withDuration:0.4, animations: {
-                    // This causes first view to fade in and second view to fade out
-                    self.trayView.center = self.trayDown
-                })
+                UIView.animate(withDuration:0.4, delay: 0, usingSpringWithDamping: 0.5, initialSpringVelocity: 1, options:[] ,
+                               animations: { () -> Void in
+                                self.trayView.center = self.trayDown
+                }, completion: nil)
             }else if(velocity.y < 0){
-                UIView.animate(withDuration:0.4, animations: {
-                    // This causes first view to fade in and second view to fade out
-                    self.trayView.center = self.trayUp
-                })
+                UIView.animate(withDuration:0.4, delay: 0, usingSpringWithDamping: 0.5, initialSpringVelocity: 1, options:[] ,
+                               animations: { () -> Void in
+                                self.trayView.center = self.trayUp
+                }, completion: nil)
             }
             
         }
